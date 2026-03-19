@@ -16,7 +16,36 @@ const C = {
   rust: "#8B3A1A",
 };
 
-const SYSTEM = "You are an elite Technical Recruiter and Career Coach specializing in Big Tech (Meta, Google, TikTok). Analyze the resume using the Three Pillars Framework. Respond ONLY with valid JSON, no markdown, no preamble: {\"overall_score\":0,\"pillars\":{\"impact_statements\":{\"score\":0,\"summary\":\"\"},\"information_architecture\":{\"score\":0,\"summary\":\"\"},\"ats_design\":{\"score\":0,\"summary\":\"\"}},\"weakest_bullets\":[{\"original\":\"\",\"rewrite\":\"\"}],\"missing_keywords\":[\"\"],\"strengths\":[\"\",\"\"],\"executive_summary\":\"\"}";
+const SYSTEM = `You are an elite Technical Recruiter and Career Coach specializing in Big Tech (Meta, Google, TikTok). Analyze the resume using the Three Pillars Framework.
+
+IMPORTANT SCORING RULES:
+- All scores are out of 100 (not 10)
+- Be constructive and actionable in ALL feedback — never give vague praise like "good use of bullet points"
+- Every pillar summary MUST include specific suggestions starting with "I suggest..." or "Consider..."
+- If a score is below 90, explain exactly what needs to change to reach 90+
+
+IMPORTANT FOR WORK EXPERIENCE:
+- Extract EVERY job from the resume
+- For each job include the company name, job title, and a 1-2 sentence summary of what their bullet points convey
+
+Respond ONLY with valid JSON, no markdown, no preamble:
+{
+  "overall_score": 0,
+  "pillars": {
+    "impact_statements": { "score": 0, "summary": "", "suggestions": [""] },
+    "information_architecture": { "score": 0, "summary": "", "suggestions": [""] },
+    "ats_design": { "score": 0, "summary": "", "suggestions": [""] }
+  },
+  "work_experience": [
+    { "company": "", "title": "", "summary": "" }
+  ],
+  "weakest_bullets": [
+    { "original": "", "rewrite": "", "reason": "" }
+  ],
+  "missing_keywords": [""],
+  "strengths": ["", ""],
+  "executive_summary": ""
+}`;
 
 const LOADING_PHRASES = [
   "📄 Reading your resume with a magnifying glass...",
@@ -45,7 +74,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
-  const [view, setView] = useState("upload"); // "upload" | "loading" | "results"
+  const [view, setView] = useState("upload");
   const [loadingPhrase, setLoadingPhrase] = useState(LOADING_PHRASES[0]);
   const [loadingPercent, setLoadingPercent] = useState(0);
   const inputRef = useRef();
@@ -64,7 +93,6 @@ export default function App() {
       setLoadingPercent(0);
       setLoadingPhrase(LOADING_PHRASES[Math.floor(Math.random() * LOADING_PHRASES.length)]);
 
-      // Simulate progress — fast at first, slows down approaching 90%
       let current = 0;
       loadingIntervalRef.current = setInterval(() => {
         const remaining = 90 - current;
@@ -73,7 +101,6 @@ export default function App() {
         setLoadingPercent(Math.round(current));
       }, 200);
 
-      // Rotate phrases
       phraseIntervalRef.current = setInterval(() => {
         setLoadingPhrase(LOADING_PHRASES[Math.floor(Math.random() * LOADING_PHRASES.length)]);
       }, 2500);
@@ -119,7 +146,6 @@ export default function App() {
       const data = await resp.json();
       const raw = data.content.map(i => i.text || "").join("").replace(/```json|```/g, "").trim();
       setResult(JSON.parse(raw));
-      // Jump to 100% briefly before showing results
       clearInterval(loadingIntervalRef.current);
       setLoadingPercent(100);
       setTimeout(() => setView("results"), 600);
@@ -157,43 +183,18 @@ export default function App() {
   if (view === "loading") {
     return (
       <div style={{ fontFamily: ff, background: C.cream, color: C.espresso, minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative" }}>
-        {/* Grain overlay */}
         <div style={{ position: "absolute", inset: 0, opacity: 0.03, pointerEvents: "none", backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")", backgroundSize: "200px" }} />
-
         <div style={{ textAlign: "center", maxWidth: 480, padding: "0 32px", position: "relative", zIndex: 1 }}>
-          {/* Decorative diamond */}
           <div style={{ width: 16, height: 16, background: C.terracotta, transform: "rotate(45deg)", margin: "0 auto 32px" }} />
-
-          {/* Percentage */}
           <div style={{ fontSize: 72, fontWeight: 900, lineHeight: 1, color: C.espresso, marginBottom: 16 }}>
             {loadingPercent}%
           </div>
-
-          {/* Progress bar */}
           <div style={{ height: 4, background: C.sand, marginBottom: 32, borderRadius: 0, overflow: "hidden" }}>
-            <div style={{
-              width: `${loadingPercent}%`,
-              height: "100%",
-              background: C.terracotta,
-              transition: "width 0.3s ease-out",
-            }} />
+            <div style={{ width: `${loadingPercent}%`, height: "100%", background: C.terracotta, transition: "width 0.3s ease-out" }} />
           </div>
-
-          {/* Funny phrase */}
-          <div style={{
-            fontSize: 18,
-            fontWeight: 500,
-            color: C.darkBrown,
-            lineHeight: 1.5,
-            minHeight: 54,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}>
+          <div style={{ fontSize: 18, fontWeight: 500, color: C.darkBrown, lineHeight: 1.5, minHeight: 54, display: "flex", alignItems: "center", justifyContent: "center" }}>
             {loadingPhrase}
           </div>
-
-          {/* File name */}
           <div style={{ marginTop: 24, fontSize: 13, color: C.tan, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>
             {file?.name}
           </div>
@@ -207,10 +208,9 @@ export default function App() {
     const grade = scoreGrade(result.overall_score);
     return (
       <div style={{ fontFamily: ff, background: C.cream, color: C.espresso, minHeight: "100vh" }}>
-        {/* Grain overlay */}
         <div style={{ position: "absolute", inset: 0, opacity: 0.03, pointerEvents: "none", backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")", backgroundSize: "200px" }} />
 
-        {/* Top bar */}
+        {/* Nav */}
         <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 32px", borderBottom: `1px solid ${C.tan}`, background: C.cream, position: "relative", zIndex: 1 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ width: 12, height: 12, background: C.terracotta, transform: "rotate(45deg)" }} />
@@ -222,88 +222,125 @@ export default function App() {
           >← Upload Another Version</button>
         </nav>
 
-        {/* Score banner */}
-        <div style={{ background: C.espresso, color: C.cream, padding: "40px 48px", display: "flex", alignItems: "center", gap: 40, position: "relative", zIndex: 1 }}>
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: C.tan, marginBottom: 6 }}>Overall Score</div>
-            <div style={{ fontSize: 72, fontWeight: 900, lineHeight: 1, color: C.cream }}>{result.overall_score}</div>
-            <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.14em", color: grade.color, marginTop: 6 }}>{grade.label}</div>
-          </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ height: 8, background: "#3a2a1a", borderRadius: 0 }}>
-              <div style={{ width: `${result.overall_score}%`, height: "100%", background: C.terracotta }} />
+        <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 1 }}>
+          {/* Score banner */}
+          <div style={{ background: C.espresso, color: C.cream, padding: "40px 48px", display: "flex", alignItems: "center", gap: 40, flexWrap: "wrap" }}>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: C.tan, marginBottom: 6 }}>Overall Score</div>
+              <div style={{ fontSize: 72, fontWeight: 900, lineHeight: 1, color: C.cream }}>{result.overall_score}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.14em", color: grade.color, marginTop: 6 }}>{grade.label}</div>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
-              <span style={{ fontSize: 12, color: C.tan }}>0</span>
-              <span style={{ fontSize: 12, color: C.tan }}>100</span>
-            </div>
-          </div>
-          <div style={{ display: "flex", gap: 24 }}>
-            {pillars.map(p => (
-              <div key={p.key} style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 28, fontWeight: 900, color: C.sand }}>{result.pillars[p.key].score}</div>
-                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: C.tan, textTransform: "uppercase", maxWidth: 80, lineHeight: 1.3 }}>{p.label}</div>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <div style={{ height: 8, background: "#3a2a1a" }}>
+                <div style={{ width: `${result.overall_score}%`, height: "100%", background: C.terracotta }} />
               </div>
-            ))}
-          </div>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1px 1fr", background: C.cream, position: "relative", zIndex: 1 }}>
-          {/* Left */}
-          <div style={{ padding: "40px 48px" }}>
-            <SectionHead label="Pillar Breakdown" color={C} />
-            {pillars.map(p => (
-              <div key={p.key} style={{ marginBottom: 24, paddingBottom: 24, borderBottom: `1px solid ${C.sand}` }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-                  <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", flex: 1, color: C.espresso }}>{p.label}</span>
-                  <span style={{ fontSize: 12, color: C.brown, background: C.sand, padding: "3px 8px" }}>{p.weight}</span>
-                  <span style={{ fontSize: 17, fontWeight: 900, color: C.espresso, minWidth: 36, textAlign: "right" }}>{result.pillars[p.key].score}/10</span>
+              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
+                <span style={{ fontSize: 12, color: C.tan }}>0</span>
+                <span style={{ fontSize: 12, color: C.tan }}>100</span>
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 24 }}>
+              {pillars.map(p => (
+                <div key={p.key} style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 28, fontWeight: 900, color: C.sand }}>{result.pillars[p.key].score}</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: C.tan, textTransform: "uppercase", maxWidth: 80, lineHeight: 1.3 }}>{p.label}</div>
                 </div>
-                <div style={{ height: 4, background: C.sand, marginBottom: 10 }}>
-                  <div style={{ width: `${result.pillars[p.key].score * 10}%`, height: "100%", background: C.terracotta }} />
-                </div>
-                <p style={{ fontSize: 15, color: C.darkBrown, lineHeight: 1.7, margin: 0 }}>{result.pillars[p.key].summary}</p>
-              </div>
-            ))}
-
-            <SectionHead label="Top Strengths" color={C} />
-            {result.strengths.map((st, i) => (
-              <div key={i} style={{ display: "flex", gap: 10, marginBottom: 12 }}>
-                <span style={{ color: C.moss, fontWeight: 900, fontSize: 18, flexShrink: 0 }}>+</span>
-                <span style={{ fontSize: 15, color: C.darkBrown, lineHeight: 1.7 }}>{st}</span>
-              </div>
-            ))}
-
-            <div style={{ marginTop: 32 }}>
-              <SectionHead label="Missing Keywords" color={C} />
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-                {result.missing_keywords.map((k, i) => (
-                  <span key={i} style={{ border: `1px solid ${C.brown}`, fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", padding: "6px 12px", color: C.darkBrown, background: C.sand }}>{k}</span>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
 
-          <div style={{ background: C.tan }} />
-
-          {/* Right */}
-          <div style={{ padding: "40px 48px" }}>
-            <SectionHead label="3 Weakest Bullets — With Rewrites" color={C} />
-            {result.weakest_bullets.map((b, i) => (
-              <div key={i} style={{ marginBottom: 28, paddingBottom: 28, borderBottom: `1px solid ${C.sand}` }}>
-                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", color: C.brown, textTransform: "uppercase", marginBottom: 6 }}>Before</div>
-                <p style={{ fontSize: 15, color: C.brown, lineHeight: 1.7, margin: "0 0 12px", fontStyle: "italic" }}>{b.original}</p>
-                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", color: C.moss, textTransform: "uppercase", marginBottom: 6 }}>After</div>
-                <p style={{ fontSize: 15, color: C.darkBrown, lineHeight: 1.7, margin: 0 }}>{b.rewrite}</p>
-              </div>
-            ))}
-
+          {/* Executive Summary — full width */}
+          <div style={{ padding: "36px 48px", borderBottom: `1px solid ${C.sand}`, background: C.cream }}>
             <SectionHead label="Executive Summary" color={C} />
             <p style={{ fontSize: 16, color: C.darkBrown, lineHeight: 1.8, margin: 0, borderLeft: `3px solid ${C.terracotta}`, paddingLeft: 20 }}>{result.executive_summary}</p>
           </div>
+
+          {/* Work Experience — full width */}
+          {result.work_experience && result.work_experience.length > 0 && (
+            <div style={{ padding: "36px 48px", borderBottom: `1px solid ${C.sand}`, background: C.cream }}>
+              <SectionHead label="Work Experience Detected" color={C} />
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
+                {result.work_experience.map((job, i) => (
+                  <div key={i} style={{ padding: 20, background: C.sand, border: `1px solid ${C.tan}` }}>
+                    <div style={{ fontSize: 15, fontWeight: 900, color: C.espresso, marginBottom: 2 }}>{job.title}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: C.terracotta, letterSpacing: "0.04em", marginBottom: 10 }}>{job.company}</div>
+                    <p style={{ fontSize: 14, color: C.darkBrown, lineHeight: 1.65, margin: 0 }}>{job.summary}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Two-column grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1px 1fr", background: C.cream }}>
+            {/* Left — Pillar Breakdown + Strengths */}
+            <div style={{ padding: "40px 48px", minWidth: 0, overflowWrap: "break-word" }}>
+              <SectionHead label="Pillar Breakdown" color={C} />
+              {pillars.map(p => (
+                <div key={p.key} style={{ marginBottom: 28, paddingBottom: 28, borderBottom: `1px solid ${C.sand}` }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                    <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", flex: 1, color: C.espresso }}>{p.label}</span>
+                    <span style={{ fontSize: 12, color: C.brown, background: C.sand, padding: "3px 8px", flexShrink: 0 }}>{p.weight}</span>
+                    <span style={{ fontSize: 17, fontWeight: 900, color: C.espresso, flexShrink: 0 }}>{result.pillars[p.key].score}/100</span>
+                  </div>
+                  <div style={{ height: 4, background: C.sand, marginBottom: 10 }}>
+                    <div style={{ width: `${result.pillars[p.key].score}%`, height: "100%", background: C.terracotta }} />
+                  </div>
+                  <p style={{ fontSize: 15, color: C.darkBrown, lineHeight: 1.7, margin: "0 0 12px" }}>{result.pillars[p.key].summary}</p>
+                  {result.pillars[p.key].suggestions && result.pillars[p.key].suggestions.length > 0 && (
+                    <div style={{ marginTop: 8 }}>
+                      {result.pillars[p.key].suggestions.map((s, i) => (
+                        <div key={i} style={{ display: "flex", gap: 8, marginBottom: 6 }}>
+                          <span style={{ color: C.terracotta, fontWeight: 900, fontSize: 14, flexShrink: 0 }}>→</span>
+                          <span style={{ fontSize: 14, color: C.darkBrown, lineHeight: 1.6 }}>{s}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              <SectionHead label="Top Strengths" color={C} />
+              {result.strengths.map((st, i) => (
+                <div key={i} style={{ display: "flex", gap: 10, marginBottom: 12 }}>
+                  <span style={{ color: C.moss, fontWeight: 900, fontSize: 18, flexShrink: 0 }}>+</span>
+                  <span style={{ fontSize: 15, color: C.darkBrown, lineHeight: 1.7 }}>{st}</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ background: C.tan }} />
+
+            {/* Right — Weakest Bullets + Missing Keywords */}
+            <div style={{ padding: "40px 48px", minWidth: 0, overflowWrap: "break-word" }}>
+              <SectionHead label="Weakest Bullets — With Rewrites" color={C} />
+              {result.weakest_bullets.map((b, i) => (
+                <div key={i} style={{ marginBottom: 28, paddingBottom: 28, borderBottom: `1px solid ${C.sand}` }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", color: C.brown, textTransform: "uppercase", marginBottom: 6 }}>Before</div>
+                  <p style={{ fontSize: 14, color: C.brown, lineHeight: 1.7, margin: "0 0 8px", fontStyle: "italic" }}>{b.original}</p>
+                  {b.reason && (
+                    <div style={{ fontSize: 13, color: C.rust, lineHeight: 1.6, margin: "0 0 12px", padding: "8px 12px", background: C.terracottaLight, border: `1px solid ${C.terracotta}` }}>
+                      <strong>Why:</strong> {b.reason}
+                    </div>
+                  )}
+                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", color: C.moss, textTransform: "uppercase", marginBottom: 6 }}>Suggested Rewrite</div>
+                  <p style={{ fontSize: 14, color: C.darkBrown, lineHeight: 1.7, margin: 0 }}>{b.rewrite}</p>
+                </div>
+              ))}
+
+              <div style={{ marginTop: 12 }}>
+                <SectionHead label="Missing Keywords" color={C} />
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+                  {result.missing_keywords.map((k, i) => (
+                    <span key={i} style={{ border: `1px solid ${C.brown}`, fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", padding: "6px 12px", color: C.darkBrown, background: C.sand }}>{k}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Footer with upload another button */}
+        {/* Footer */}
         <div style={{ background: C.espresso, padding: "24px 48px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", zIndex: 1 }}>
           <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
             <a href="https://linkedin.com/in/ricobolos" style={{ fontSize: 13, color: C.sand, letterSpacing: "0.06em", fontWeight: 700, textDecoration: "underline", textDecorationStyle: "dotted" }}>
@@ -322,15 +359,11 @@ export default function App() {
     );
   }
 
-  // ─── UPLOAD SCREEN (default) ───
+  // ─── UPLOAD SCREEN ───
   return (
-    <div
-      style={{ fontFamily: ff, background: C.cream, color: C.espresso, minHeight: "100vh" }}
-    >
-      {/* Decorative grain texture overlay */}
+    <div style={{ fontFamily: ff, background: C.cream, color: C.espresso, minHeight: "100vh" }}>
       <div style={{ position: "absolute", inset: 0, opacity: 0.03, pointerEvents: "none", backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")", backgroundSize: "200px" }} />
 
-      {/* Nav */}
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 32px", borderBottom: `1px solid ${C.tan}`, background: C.cream }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 12, height: 12, background: C.terracotta, transform: "rotate(45deg)" }} />
@@ -342,11 +375,8 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Hero split */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1px minmax(0,440px)", minHeight: "calc(100vh - 48px)" }}>
         <div style={{ padding: "56px 48px", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
-
-          {/* Decorative corner marks */}
           <div style={{ position: "absolute", top: 64, left: 32, width: 20, height: 20, borderTop: `2px solid ${C.tan}`, borderLeft: `2px solid ${C.tan}` }} />
           <div style={{ position: "absolute", top: 64, right: 448, width: 20, height: 20, borderTop: `2px solid ${C.tan}`, borderRight: `2px solid ${C.tan}` }} />
 
@@ -376,7 +406,6 @@ export default function App() {
             >Analyze →</button>
           </div>
 
-          {/* Credit line */}
           <div style={{ marginTop: 48, paddingTop: 20, borderTop: `1px solid ${C.tan}`, display: "flex", flexDirection: "column", gap: 4 }}>
             <span style={{ fontSize: 13, color: C.brown, letterSpacing: "0.06em" }}>Designed by <a href="https://linkedin.com/in/ricobolos" style={{ color: C.espresso, fontWeight: 700, textDecoration: "underline", textDecorationStyle: "dotted" }}>Rico Bolos</a></span>
             <span style={{ fontSize: 13, color: C.brown }}>
@@ -390,7 +419,6 @@ export default function App() {
 
         <div style={{ background: C.tan }} />
 
-        {/* Right panel */}
         <div style={{ display: "flex", flexDirection: "column", background: C.sand }}>
           {[
             { n: "01", title: "Impact Statements", desc: "Every bullet scored against the 'Accomplished [X] as measured by [Y], by doing [Z]' formula. Passive verbs and task-focus flagged.", weight: "40%" },
@@ -407,7 +435,6 @@ export default function App() {
             </div>
           ))}
 
-          {/* Upload */}
           <div style={{ padding: "28px 32px", borderTop: `1px solid ${C.tan}` }}>
             <div
               onClick={() => inputRef.current.click()}
