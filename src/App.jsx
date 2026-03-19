@@ -50,12 +50,12 @@ export default function App() {
     setLoading(true); setError(null); setResult(null);
     try {
       const b64 = await toBase64(file);
-      const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      const resp = await fetch("/.netlify/functions/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
+          max_tokens: 4096,
           system: SYSTEM,
           messages: [{ role: "user", content: [
             { type: "document", source: { type: "base64", media_type: "application/pdf", data: b64 } },

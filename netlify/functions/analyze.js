@@ -1,0 +1,37 @@
+export async function handler(event) {
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, body: "Method not allowed" };
+  }
+
+  const apiKey = process.env.ANTHROPIC_KEY;
+  if (!apiKey) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "ANTHROPIC_KEY not configured" }),
+    };
+  }
+
+  try {
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: event.body,
+    });
+
+    const data = await resp.text();
+    return {
+      statusCode: resp.status,
+      headers: { "Content-Type": "application/json" },
+      body: data,
+    };
+  } catch (e) {
+    return {
+      statusCode: 502,
+      body: JSON.stringify({ error: "Failed to reach Anthropic API" }),
+    };
+  }
+}
