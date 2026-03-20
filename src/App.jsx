@@ -600,8 +600,8 @@ export default function App() {
             </div>
           ))}
         </div>
-        <div style={{ fontSize: 13, color: C.tan, textAlign: "center", marginBottom: 16, fontStyle: "italic" }}>Drop your PDF and find out where you stand.</div>
-        <div style={{ fontSize: 12, color: C.tan, textAlign: "center", marginBottom: 48, lineHeight: 1.7 }}>
+        <div style={{ fontSize: 13, color: C.brown, textAlign: "center", marginBottom: 16, fontStyle: "italic" }}>Drop your PDF and find out where you stand.</div>
+        <div style={{ fontSize: 12, color: C.brown, textAlign: "center", marginBottom: 48, lineHeight: 1.7 }}>
           We don't store your resume or results — download your analysis when it's ready,<br />because you'll only be able to view it once.
         </div>
 
