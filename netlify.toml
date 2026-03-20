@@ -5,6 +5,10 @@
 [functions]
   directory = "netlify/functions"
 
+[[edge_functions]]
+  path = "/api/analyze"
+  function = "analyze"
+
 [[headers]]
   for = "*.js"
   [headers.values]

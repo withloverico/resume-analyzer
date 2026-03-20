@@ -139,7 +139,7 @@ export default function App() {
     setView("loading");
     try {
       const b64 = await toBase64(file);
-      const resp = await fetch("/.netlify/functions/analyze", {
+      const resp = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -154,13 +154,45 @@ export default function App() {
       });
       if (!resp.ok) {
         const errBody = await resp.text();
-        throw new Error(`API returned ${resp.status}: ${errBody}`);
+        let msg;
+        if (resp.status === 429) msg = "Rate limited — please wait a moment and try again.";
+        else if (resp.status === 401) msg = "Invalid API key. Check your ANTHROPIC_KEY in Netlify.";
+        else if (resp.status === 504 || resp.status === 502) msg = "Request timed out — the server took too long to respond. Try again.";
+        else if (resp.status === 500) msg = "Server error — something went wrong on our end.";
+        else {
+          try { msg = JSON.parse(errBody).error?.message; } catch { /* not JSON */ }
+          msg = msg || `Something went wrong (${resp.status}). Please try again.`;
+        }
+        throw new Error(msg);
       }
-      const data = await resp.json();
-      if (data.error) {
-        throw new Error(data.error.message || "API error");
+
+      // Read SSE stream and accumulate text deltas
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let fullText = "";
+
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop();
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          const data = line.slice(6).trim();
+          if (data === "[DONE]") continue;
+          try {
+            const evt = JSON.parse(data);
+            if (evt.type === "content_block_delta" && evt.delta?.type === "text_delta") {
+              fullText += evt.delta.text;
+            }
+          } catch { /* non-text SSE event, skip */ }
+        }
       }
-      const raw = data.content.map(i => i.text || "").join("").replace(/```json|```/g, "").trim();
+
+      const raw = fullText.replace(/```json|```/g, "").trim();
+      if (!raw) throw new Error("No content received from API");
       let parsed;
       try {
         parsed = JSON.parse(raw);
