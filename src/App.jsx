@@ -233,11 +233,9 @@ export default function App() {
   };
 
   const closeJobCard = () => {
+    setSelectedJob(null);
+    setCardRect(null);
     setIsFlipped(false);
-    setTimeout(() => {
-      setSelectedJob(null);
-      setCardRect(null);
-    }, 700);
   };
 
   const pillars = [
