@@ -144,7 +144,7 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
-          max_tokens: 8192,
+          max_tokens: 16384,
           system: SYSTEM,
           messages: [{ role: "user", content: [
             { type: "document", source: { type: "base64", media_type: "application/pdf", data: b64 } },
@@ -152,14 +152,28 @@ export default function App() {
           ]}]
         })
       });
+      if (!resp.ok) {
+        const errBody = await resp.text();
+        throw new Error(`API returned ${resp.status}: ${errBody}`);
+      }
       const data = await resp.json();
+      if (data.error) {
+        throw new Error(data.error.message || "API error");
+      }
       const raw = data.content.map(i => i.text || "").join("").replace(/```json|```/g, "").trim();
-      setResult(JSON.parse(raw));
+      let parsed;
+      try {
+        parsed = JSON.parse(raw);
+      } catch {
+        const fixed = raw.replace(/,\s*([}\]])/g, "$1");
+        try { parsed = JSON.parse(fixed); } catch { throw new Error("Could not parse response as JSON"); }
+      }
+      setResult(parsed);
       clearInterval(loadingIntervalRef.current);
       setLoadingPercent(100);
       setTimeout(() => setView("results"), 600);
     } catch (e) {
-      setError("Analysis failed. Please try again.");
+      setError(e.message || "Analysis failed. Please try again.");
       setView("upload");
     }
     setLoading(false);
