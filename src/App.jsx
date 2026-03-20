@@ -313,16 +313,19 @@ export default function App() {
                 <span style={{ fontSize: 12, color: C.tan }}>100</span>
               </div>
             </div>
-            <div style={{ borderLeft: `1px solid ${C.darkBrown}`, paddingLeft: 32 }}>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: C.tan, marginBottom: 12 }}>Category Scores</div>
-              <div style={{ display: "flex", gap: 0 }}>
-                {pillars.map((p, i) => (
-                  <div key={p.key} style={{ textAlign: "center", padding: "0 20px", borderLeft: i > 0 ? `1px solid ${C.darkBrown}` : "none" }}>
-                    <div style={{ fontSize: 28, fontWeight: 900, color: C.sand }}>{result.pillars[p.key].score}</div>
-                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: C.tan, textTransform: "uppercase", maxWidth: 80, lineHeight: 1.3 }}>{p.label}</div>
-                  </div>
-                ))}
-              </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              {pillars.map((p) => (
+                <div key={p.key} style={{
+                  background: "rgba(255,255,255,0.06)",
+                  padding: "20px 24px",
+                  minWidth: 120,
+                  textAlign: "center",
+                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                }}>
+                  <div style={{ fontSize: 32, fontWeight: 900, lineHeight: 1, color: C.cream, marginBottom: 6 }}>{result.pillars[p.key].score}</div>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: C.tan, textTransform: "uppercase", lineHeight: 1.3 }}>{p.label}</div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -543,113 +546,88 @@ export default function App() {
 
   // ─── UPLOAD SCREEN ───
   return (
-    <div style={{ fontFamily: ff, background: C.cream, color: C.espresso, minHeight: "100vh" }}>
+    <div style={{ fontFamily: ff, background: C.cream, color: C.espresso, minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <div style={{ position: "absolute", inset: 0, opacity: 0.03, pointerEvents: "none", backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")", backgroundSize: "200px" }} />
 
-      <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 32px", borderBottom: `1px solid ${C.tan}`, background: C.cream }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 12, height: 12, background: C.terracotta, transform: "rotate(45deg)" }} />
-          <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: C.espresso }}>Resume Analyzer</span>
-        </div>
-        <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
-          <span style={{ fontSize: 12, letterSpacing: "0.1em", color: C.brown, textTransform: "uppercase" }}>V 1.0.0</span>
-          <span style={{ fontSize: 12, letterSpacing: "0.1em", color: C.brown, textTransform: "uppercase" }}>Three Pillars Framework</span>
-        </div>
-      </nav>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", zIndex: 1, padding: "80px 24px" }}>
+        {/* Organic arc */}
+        <svg width="64" height="32" viewBox="0 0 64 32" fill="none" style={{ marginBottom: 32, opacity: 0.5 }}>
+          <path d="M2 30 C16 2, 48 2, 62 30" stroke={C.moss} strokeWidth="2" fill="none" strokeLinecap="round" />
+        </svg>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1px minmax(0,440px)", minHeight: "calc(100vh - 48px)" }}>
-        <div style={{ padding: "56px 48px", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
-          <div style={{ position: "absolute", top: 64, left: 32, width: 20, height: 20, borderTop: `2px solid ${C.tan}`, borderLeft: `2px solid ${C.tan}` }} />
-          <div style={{ position: "absolute", top: 64, right: 448, width: 20, height: 20, borderTop: `2px solid ${C.tan}`, borderRight: `2px solid ${C.tan}` }} />
+        <h1 style={{ fontSize: "clamp(40px, 6vw, 64px)", fontWeight: 900, lineHeight: 1, letterSpacing: "-0.03em", color: C.espresso, marginBottom: 12, textAlign: "center" }}>
+          Resume Analyzer
+        </h1>
+        <p style={{ fontSize: 16, color: C.brown, textAlign: "center", maxWidth: 400, lineHeight: 1.7, marginBottom: 48 }}>
+          Big Tech-caliber critique scored on Impact, Architecture, and ATS Design.
+        </p>
 
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: C.terracottaLight, border: `1px solid ${C.terracotta}`, padding: "5px 12px", marginBottom: 36, alignSelf: "flex-start" }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.terracotta }} />
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: C.rust }}>System Active</span>
-          </div>
-
-          <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.brown, marginBottom: 10 }}>For Product Managers</div>
-          <h1 style={{ fontSize: "clamp(56px, 8vw, 88px)", fontWeight: 900, lineHeight: 0.88, letterSpacing: "-0.03em", textTransform: "uppercase", color: C.espresso, marginBottom: 28 }}>
-            Resume<br />Analyzer
-          </h1>
-          <div style={{ width: 64, height: 3, background: C.terracotta, marginBottom: 32 }} />
-          <p style={{ fontSize: 17, lineHeight: 1.65, maxWidth: 400, marginBottom: 48, color: C.darkBrown }}>
-            <strong style={{ color: C.espresso }}>Big Tech-caliber resume critique.</strong>{" "}
-            <span style={{ color: C.brown }}>Upload your PDF and get a structured score on Impact Statements, Information Architecture, and ATS Design.</span>
-          </p>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <button
-              onClick={() => inputRef.current.click()}
-              style={{ background: C.espresso, color: C.cream, border: "none", padding: "14px 26px", fontSize: 13, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", cursor: "pointer" }}
-            >Upload PDF ↓</button>
-            <button
-              onClick={analyze}
-              disabled={!file || loading}
-              style={{ background: "transparent", color: file && !loading ? C.espresso : C.tan, border: `1px solid ${file && !loading ? C.espresso : C.tan}`, padding: "14px 26px", fontSize: 13, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", cursor: file && !loading ? "pointer" : "default" }}
-            >Analyze →</button>
-          </div>
-
-          <div style={{ marginTop: 48, paddingTop: 20, borderTop: `1px solid ${C.tan}`, display: "flex", flexDirection: "column", gap: 4 }}>
-            <span style={{ fontSize: 13, color: C.brown, letterSpacing: "0.06em" }}>Designed by <a href="https://linkedin.com/in/ricobolos" style={{ color: C.espresso, fontWeight: 700, textDecoration: "underline", textDecorationStyle: "dotted" }}>Rico Bolos</a></span>
-            <span style={{ fontSize: 13, color: C.brown }}>
-              Rubric from{" "}
-              <a href="https://www.youtube.com/watch?v=3aWHJdS59Qk" style={{ color: C.terracotta, textDecoration: "underline", textDecorationStyle: "dotted" }}>
-                Chloe Shih's PM Resume Tips
-              </a>
-            </span>
-          </div>
-        </div>
-
-        <div style={{ background: C.tan }} />
-
-        <div style={{ display: "flex", flexDirection: "column", background: C.sand }}>
-          {[
-            { n: "01", title: "Impact Statements", desc: "Every bullet scored against the 'Accomplished [X] as measured by [Y], by doing [Z]' formula. Passive verbs and task-focus flagged.", weight: "40%" },
-            { n: "02", title: "Information Architecture", desc: "Hierarchy, keyword placement, and section ordering evaluated. Best achievements should appear in the top third.", weight: "30%" },
-            { n: "03", title: "ATS Design", desc: "Clean, scannable layout check. Multi-column formats, graphics, and skill progress bars flagged.", weight: "30%" },
-          ].map((f) => (
-            <div key={f.n} style={{ padding: "28px 32px", borderBottom: `1px solid ${C.tan}`, flex: 1 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 40 }}>
-                <span style={{ border: `1px solid ${C.brown}`, fontSize: 11, fontWeight: 700, padding: "3px 7px", letterSpacing: "0.08em", color: C.brown }}>{f.n}</span>
-                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: C.terracotta, background: C.terracottaLight, padding: "3px 8px" }}>{f.weight}</span>
+        {/* Drop zone */}
+        <div
+          onDragOver={e => { e.preventDefault(); setDrag(true); }}
+          onDragLeave={() => setDrag(false)}
+          onDrop={e => { e.preventDefault(); setDrag(false); handleFile(e.dataTransfer.files[0]); }}
+          style={{
+            width: "100%", maxWidth: 480,
+            border: file ? `2px solid ${C.moss}` : drag ? `2px solid ${C.brown}` : `2px dashed ${C.tan}`,
+            borderRadius: 16,
+            padding: "48px 32px",
+            textAlign: "center",
+            background: file ? C.mossLight : drag ? C.sand : "rgba(232,223,200,0.4)",
+            transition: "all 0.3s ease",
+            marginBottom: 16,
+          }}
+        >
+          {file ? (
+            <>
+              <div style={{ fontSize: 15, fontWeight: 700, color: C.moss, marginBottom: 4 }}>{file.name}</div>
+              <div style={{ fontSize: 13, color: C.brown }}>{(file.size / 1024).toFixed(0)} KB</div>
+            </>
+          ) : (
+            <>
+              {/* Leaf icon */}
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ marginBottom: 16, opacity: 0.4 }}>
+                <path d="M16 28 C16 28, 6 20, 6 12 C6 4, 16 2, 16 2 C16 2, 26 4, 26 12 C26 20, 16 28, 16 28Z" stroke={C.moss} strokeWidth="1.5" fill="none" />
+                <path d="M16 28 L16 10" stroke={C.moss} strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              <div style={{ fontSize: 15, color: C.darkBrown, marginBottom: 6 }}>
+                Drop your resume here
               </div>
-              <h3 style={{ fontSize: 19, fontWeight: 900, letterSpacing: "0.04em", textTransform: "uppercase", color: C.espresso, marginBottom: 10 }}>{f.title}</h3>
-              <p style={{ fontSize: 14, color: C.darkBrown, lineHeight: 1.65 }}>{f.desc}</p>
-            </div>
-          ))}
-
-          <div style={{ padding: "28px 32px", borderTop: `1px solid ${C.tan}` }}>
-            <div
-              onClick={() => inputRef.current.click()}
-              onDragOver={e => { e.preventDefault(); setDrag(true); }}
-              onDragLeave={() => setDrag(false)}
-              onDrop={e => { e.preventDefault(); setDrag(false); handleFile(e.dataTransfer.files[0]); }}
-              style={{
-                border: file ? `1.5px dashed ${C.moss}` : drag ? `1.5px dashed ${C.brown}` : `1.5px dashed ${C.tan}`,
-                padding: "24px", textAlign: "center", cursor: "pointer", marginBottom: 14,
-                background: file ? C.mossLight : drag ? "#f5f0e0" : "transparent",
-              }}
-            >
-              <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: file ? C.moss : C.brown, marginBottom: 4 }}>
-                {file ? file.name : "Drop PDF or click to upload"}
+              <div style={{ fontSize: 13, color: C.tan }}>
+                or{" "}
+                <span
+                  onClick={() => inputRef.current.click()}
+                  style={{ color: C.terracotta, fontWeight: 700, cursor: "pointer", textDecoration: "underline", textDecorationStyle: "dotted", textUnderlineOffset: 3 }}
+                >upload</span>
+                {" "}a PDF
               </div>
-              <div style={{ fontSize: 12, color: C.tan }}>
-                {file ? `${(file.size / 1024).toFixed(0)} KB` : "Accepts .pdf only"}
-              </div>
-            </div>
-            <input ref={inputRef} type="file" accept=".pdf" style={{ display: "none" }} onChange={e => handleFile(e.target.files[0])} />
-            {error && <div style={{ fontSize: 13, color: C.rust, fontWeight: 700, letterSpacing: "0.06em", marginBottom: 10, textTransform: "uppercase" }}>{error}</div>}
-            <button
-              onClick={analyze}
-              disabled={!file || loading}
-              style={{
-                width: "100%", padding: "14px", fontSize: 13, fontWeight: 700, letterSpacing: "0.14em",
-                textTransform: "uppercase", border: "none", cursor: file && !loading ? "pointer" : "default",
-                background: file && !loading ? C.espresso : C.tan,
-                color: file && !loading ? C.cream : C.brown,
-              }}
-            >Analyze Resume →</button>
-          </div>
+            </>
+          )}
         </div>
+        <input ref={inputRef} type="file" accept=".pdf" style={{ display: "none" }} onChange={e => handleFile(e.target.files[0])} />
+
+        {error && <div style={{ fontSize: 13, color: C.rust, fontWeight: 600, marginBottom: 12 }}>{error}</div>}
+
+        <button
+          onClick={analyze}
+          disabled={!file || loading}
+          style={{
+            padding: "14px 40px", fontSize: 14, fontWeight: 700, letterSpacing: "0.08em",
+            textTransform: "uppercase", border: "none", borderRadius: 8, cursor: file && !loading ? "pointer" : "default",
+            background: file && !loading ? C.espresso : C.tan,
+            color: file && !loading ? C.cream : C.brown,
+            transition: "all 0.3s ease",
+          }}
+        >Analyze →</button>
+      </div>
+
+      {/* Footer */}
+      <div style={{ textAlign: "center", padding: "20px 24px", position: "relative", zIndex: 1 }}>
+        <span style={{ fontSize: 12, color: C.tan }}>
+          By <a href="https://linkedin.com/in/ricobolos" style={{ color: C.brown, textDecoration: "underline", textDecorationStyle: "dotted", textUnderlineOffset: 3 }}>Rico Bolos</a>
+          {" "}&middot;{" "}
+          Rubric from <a href="https://www.youtube.com/watch?v=3aWHJdS59Qk" style={{ color: C.brown, textDecoration: "underline", textDecorationStyle: "dotted", textUnderlineOffset: 3 }}>Chloe Shih</a>
+        </span>
       </div>
     </div>
   );
