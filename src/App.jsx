@@ -284,16 +284,31 @@ export default function App() {
       <div style={{ fontFamily: ff, background: C.cream, color: C.espresso, minHeight: "100vh" }}>
         <div style={{ position: "absolute", inset: 0, opacity: 0.03, pointerEvents: "none", backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")", backgroundSize: "200px" }} />
 
+        {/* Print styles */}
+        <style>{`
+          .print-bullets { display: none !important; }
+          @media print {
+            .no-print { display: none !important; }
+            .print-bullets { display: block !important; }
+          }
+        `}</style>
+
         {/* Nav */}
-        <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 32px", borderBottom: `1px solid ${C.tan}`, background: C.cream, position: "relative", zIndex: 1 }}>
+        <nav className="no-print" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 32px", borderBottom: `1px solid ${C.tan}`, background: C.cream, position: "relative", zIndex: 1 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ width: 12, height: 12, background: C.terracotta, transform: "rotate(45deg)" }} />
             <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: C.espresso }}>Resume Analyzer</span>
           </div>
-          <button
-            onClick={resetToUpload}
-            style={{ background: C.forest, color: C.parchment, border: "none", padding: "11px 22px", fontSize: 13, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer" }}
-          >← Upload Another Version</button>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button
+              onClick={() => window.print()}
+              style={{ background: "transparent", color: C.forest, border: `1px solid ${C.forest}`, padding: "11px 22px", fontSize: 13, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer" }}
+            >Download PDF ↓</button>
+            <button
+              onClick={resetToUpload}
+              style={{ background: C.forest, color: C.parchment, border: "none", padding: "11px 22px", fontSize: 13, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer" }}
+            >← Upload Another</button>
+          </div>
         </nav>
 
         <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 1 }}>
@@ -352,7 +367,20 @@ export default function App() {
                     <div style={{ fontSize: 15, fontWeight: 900, color: C.forest, marginBottom: 2 }}>{job.title}</div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: C.brown, letterSpacing: "0.04em", marginBottom: 10 }}>{job.company}</div>
                     <p style={{ fontSize: 14, color: C.darkBrown, lineHeight: 1.65, margin: "0 0 12px" }}>{job.summary}</p>
-                    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.forest }}>View bullet rewrites →</div>
+                    <div className="no-print" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.forest }}>View bullet rewrites →</div>
+                    {/* Print-only: all bullet rewrites inline */}
+                    {job.bullets && job.bullets.length > 0 && (
+                      <div className="print-bullets" style={{ marginTop: 12, borderTop: `1px solid ${C.tan}`, paddingTop: 12 }}>
+                        {job.bullets.map((b, bi) => (
+                          <div key={bi} style={{ marginBottom: 12 }}>
+                            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: C.forest, textTransform: "uppercase", marginBottom: 4 }}>Original</div>
+                            <p style={{ fontSize: 12, color: C.brown, lineHeight: 1.6, margin: "0 0 6px", fontStyle: "italic" }}>{b.original}</p>
+                            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: C.forest, textTransform: "uppercase", marginBottom: 4 }}>Rewrite</div>
+                            <p style={{ fontSize: 12, color: C.darkBrown, lineHeight: 1.6, margin: 0 }}>{b.rewrite}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -526,7 +554,7 @@ export default function App() {
         })()}
 
         {/* Footer */}
-        <div style={{ background: C.espresso, padding: "24px 48px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", zIndex: 1 }}>
+        <div className="no-print" style={{ background: C.espresso, padding: "24px 48px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", zIndex: 1 }}>
           <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
             <a href="https://linkedin.com/in/ricobolos" style={{ fontSize: 13, color: C.sand, letterSpacing: "0.06em", fontWeight: 700, textDecoration: "underline", textDecorationStyle: "dotted" }}>
               Rico Bolos
@@ -572,7 +600,10 @@ export default function App() {
             </div>
           ))}
         </div>
-        <div style={{ fontSize: 13, color: C.tan, textAlign: "center", marginBottom: 48, fontStyle: "italic" }}>Drop your PDF and find out where you stand.</div>
+        <div style={{ fontSize: 13, color: C.tan, textAlign: "center", marginBottom: 16, fontStyle: "italic" }}>Drop your PDF and find out where you stand.</div>
+        <div style={{ fontSize: 12, color: C.tan, textAlign: "center", marginBottom: 48, lineHeight: 1.7 }}>
+          We don't store your resume or results — download your analysis when it's ready,<br />because you'll only be able to view it once.
+        </div>
 
         {/* Drop zone */}
         <div
