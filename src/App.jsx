@@ -14,6 +14,8 @@ const C = {
   moss: "#6B7C4E",
   mossLight: "#E8EDD8",
   rust: "#8B3A1A",
+  forest: "#5a7a4f",
+  parchment: "#f2efe2",
 };
 
 const SYSTEM = `You are an elite Technical Recruiter and Career Coach specializing in Big Tech (Meta, Google, TikTok). Analyze the resume using the Three Pillars Framework.
@@ -245,7 +247,7 @@ export default function App() {
   ];
 
   const scoreGrade = (s) => {
-    if (s >= 85) return { label: "STRONG", color: C.moss };
+    if (s >= 85) return { label: "STRONG", color: C.forest };
     if (s >= 70) return { label: "SOLID", color: C.brown };
     if (s >= 50) return { label: "NEEDS WORK", color: C.terracotta };
     return { label: "WEAK", color: C.rust };
@@ -292,7 +294,7 @@ export default function App() {
           </div>
           <button
             onClick={resetToUpload}
-            style={{ background: C.espresso, color: C.cream, border: "none", padding: "11px 22px", fontSize: 13, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer" }}
+            style={{ background: C.forest, color: C.parchment, border: "none", padding: "11px 22px", fontSize: 13, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer" }}
           >← Upload Another Version</button>
         </nav>
 
@@ -349,10 +351,10 @@ export default function App() {
                     onMouseLeave={e => { e.currentTarget.style.borderColor = C.tan; e.currentTarget.style.transform = "translateY(0)"; }}
                     style={{ padding: 20, background: C.sand, border: `1px solid ${C.tan}`, cursor: "pointer", transition: "border-color 0.2s, transform 0.2s" }}
                   >
-                    <div style={{ fontSize: 15, fontWeight: 900, color: C.espresso, marginBottom: 2 }}>{job.title}</div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: C.terracotta, letterSpacing: "0.04em", marginBottom: 10 }}>{job.company}</div>
+                    <div style={{ fontSize: 15, fontWeight: 900, color: C.forest, marginBottom: 2 }}>{job.title}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: C.brown, letterSpacing: "0.04em", marginBottom: 10 }}>{job.company}</div>
                     <p style={{ fontSize: 14, color: C.darkBrown, lineHeight: 1.65, margin: "0 0 12px" }}>{job.summary}</p>
-                    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.brown }}>View bullet rewrites →</div>
+                    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.forest }}>View bullet rewrites →</div>
                   </div>
                 ))}
               </div>
@@ -367,7 +369,7 @@ export default function App() {
               {pillars.map(p => (
                 <div key={p.key} style={{ marginBottom: 28, paddingBottom: 28, borderBottom: `1px solid ${C.sand}` }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-                    <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", flex: 1, color: C.espresso }}>{p.label}</span>
+                    <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", flex: 1, color: C.forest }}>{p.label}</span>
                     <span style={{ fontSize: 12, color: C.brown, background: C.sand, padding: "3px 8px", flexShrink: 0 }}>{p.weight}</span>
                     <span style={{ fontSize: 17, fontWeight: 900, color: C.espresso, flexShrink: 0 }}>{result.pillars[p.key].score}/100</span>
                   </div>
@@ -404,14 +406,14 @@ export default function App() {
               <SectionHead label="Weakest Bullets — With Rewrites" color={C} />
               {result.weakest_bullets.map((b, i) => (
                 <div key={i} style={{ marginBottom: 28, paddingBottom: 28, borderBottom: `1px solid ${C.sand}` }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", color: C.brown, textTransform: "uppercase", marginBottom: 6 }}>Before</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", color: C.forest, textTransform: "uppercase", marginBottom: 6 }}>Before</div>
                   <p style={{ fontSize: 14, color: C.brown, lineHeight: 1.7, margin: "0 0 8px", fontStyle: "italic" }}>{b.original}</p>
                   {b.reason && (
                     <div style={{ fontSize: 13, color: C.rust, lineHeight: 1.6, margin: "0 0 12px", padding: "8px 12px", background: C.terracottaLight, border: `1px solid ${C.terracotta}` }}>
                       <strong>Why:</strong> {b.reason}
                     </div>
                   )}
-                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", color: C.moss, textTransform: "uppercase", marginBottom: 6 }}>Suggested Rewrite</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", color: C.forest, textTransform: "uppercase", marginBottom: 6 }}>Suggested Rewrite</div>
                   <p style={{ fontSize: 14, color: C.darkBrown, lineHeight: 1.7, margin: 0 }}>{b.rewrite}</p>
                 </div>
               ))}
@@ -490,8 +492,8 @@ export default function App() {
                 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24, paddingBottom: 20, borderBottom: `1px solid ${C.sand}` }}>
                     <div>
-                      <div style={{ fontSize: 20, fontWeight: 900, color: C.espresso, marginBottom: 2 }}>{job.title}</div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: C.terracotta, letterSpacing: "0.04em" }}>{job.company}</div>
+                      <div style={{ fontSize: 20, fontWeight: 900, color: C.forest, marginBottom: 2 }}>{job.title}</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: C.brown, letterSpacing: "0.04em" }}>{job.company}</div>
                     </div>
                     <button
                       onClick={closeJobCard}
@@ -509,9 +511,9 @@ export default function App() {
 
                   {job.bullets && job.bullets.map((b, i) => (
                     <div key={i} style={{ marginBottom: 20, paddingBottom: 20, borderBottom: `1px solid ${C.sand}` }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", color: C.brown, textTransform: "uppercase", marginBottom: 6 }}>Original</div>
+                      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", color: C.forest, textTransform: "uppercase", marginBottom: 6 }}>Original</div>
                       <p style={{ fontSize: 14, color: C.brown, lineHeight: 1.7, margin: "0 0 12px", fontStyle: "italic" }}>{b.original}</p>
-                      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", color: C.moss, textTransform: "uppercase", marginBottom: 6 }}>Suggested Rewrite</div>
+                      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", color: C.forest, textTransform: "uppercase", marginBottom: 6 }}>Suggested Rewrite</div>
                       <p style={{ fontSize: 14, color: C.darkBrown, lineHeight: 1.7, margin: 0 }}>{b.rewrite}</p>
                     </div>
                   ))}
@@ -537,7 +539,7 @@ export default function App() {
           </div>
           <button
             onClick={resetToUpload}
-            style={{ background: C.terracotta, color: C.cream, border: "none", padding: "11px 22px", fontSize: 13, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer" }}
+            style={{ background: C.forest, color: C.parchment, border: "none", padding: "11px 22px", fontSize: 13, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer" }}
           >Upload Another Version →</button>
         </div>
       </div>
@@ -555,12 +557,24 @@ export default function App() {
           <path d="M2 30 C16 2, 48 2, 62 30" stroke={C.moss} strokeWidth="2" fill="none" strokeLinecap="round" />
         </svg>
 
-        <h1 style={{ fontSize: "clamp(40px, 6vw, 64px)", fontWeight: 900, lineHeight: 1, letterSpacing: "-0.03em", color: C.espresso, marginBottom: 12, textAlign: "center" }}>
+
+        <div style={{ fontSize: 14, color: C.brown, marginBottom: 20, textAlign: "center", fontStyle: "italic", opacity: 0.7 }}>Worried about your resume? You're not alone.</div>
+
+        <h1 style={{ fontSize: "clamp(40px, 6vw, 64px)", fontWeight: 900, lineHeight: 1, letterSpacing: "-0.03em", color: C.espresso, marginBottom: 16, textAlign: "center" }}>
           Resume Analyzer
         </h1>
-        <p style={{ fontSize: 16, color: C.brown, textAlign: "center", maxWidth: 400, lineHeight: 1.7, marginBottom: 48 }}>
-          Big Tech-caliber critique scored on Impact, Architecture, and ATS Design.
+        <p style={{ fontSize: 15, color: C.brown, textAlign: "center", maxWidth: 420, lineHeight: 1.7, marginBottom: 20 }}>
+          Big Tech-caliber critique scored on three pillars:
         </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 12 }}>
+          {["Impact Statements", "Information Architecture", "ATS Design"].map((item) => (
+            <div key={item} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.tan, flexShrink: 0 }} />
+              <span style={{ fontSize: 14, color: C.darkBrown, fontWeight: 500 }}>{item}</span>
+            </div>
+          ))}
+        </div>
+        <div style={{ fontSize: 13, color: C.tan, textAlign: "center", marginBottom: 48, fontStyle: "italic" }}>Drop your PDF and find out where you stand.</div>
 
         {/* Drop zone */}
         <div
@@ -614,11 +628,66 @@ export default function App() {
           style={{
             padding: "14px 40px", fontSize: 14, fontWeight: 700, letterSpacing: "0.08em",
             textTransform: "uppercase", border: "none", borderRadius: 8, cursor: file && !loading ? "pointer" : "default",
-            background: file && !loading ? C.espresso : C.tan,
-            color: file && !loading ? C.cream : C.brown,
+            background: file && !loading ? C.forest : C.tan,
+            color: file && !loading ? C.parchment : C.brown,
             transition: "all 0.3s ease",
           }}
         >Analyze →</button>
+      </div>
+
+      {/* How It Works */}
+      <div style={{ background: C.sand, padding: "80px 24px", position: "relative", zIndex: 1 }}>
+        <div style={{ maxWidth: 560, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 48 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: C.forest, marginBottom: 8 }}>How It Works</div>
+            <div style={{ fontSize: 28, fontWeight: 900, color: C.espresso }}>Three steps. One honest score.</div>
+          </div>
+
+          {[
+            { step: "01", title: "Drop your resume", desc: "Upload any PDF — we read it page by page, just like a recruiter would on a Monday morning." },
+            { step: "02", title: "AI does the hard part", desc: "Our engine scores every bullet, checks your structure, and flags what ATS systems will choke on." },
+            { step: "03", title: "Get your playbook", desc: "You'll see exactly what to fix, with rewritten bullets you can copy straight into your resume." },
+          ].map((item, i) => (
+            <div key={item.step} style={{ display: "flex", gap: 24 }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 32, flexShrink: 0 }}>
+                <div style={{ width: 32, height: 32, borderRadius: "50%", background: C.forest, color: C.parchment, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 900 }}>{item.step}</div>
+                {i < 2 && <div style={{ width: 2, flex: 1, background: C.tan, minHeight: 40 }} />}
+              </div>
+              <div style={{ paddingBottom: i < 2 ? 32 : 0 }}>
+                <div style={{ fontSize: 16, fontWeight: 900, color: C.forest, marginBottom: 4 }}>{item.title}</div>
+                <p style={{ fontSize: 14, color: C.darkBrown, lineHeight: 1.7, margin: 0 }}>{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* The Rubric */}
+      <div style={{ background: C.cream, padding: "80px 24px", position: "relative", zIndex: 1 }}>
+        <div style={{ maxWidth: 520, margin: "0 auto", textAlign: "center" }}>
+          <svg width="48" height="24" viewBox="0 0 64 32" fill="none" style={{ marginBottom: 24, opacity: 0.4 }}>
+            <path d="M2 30 C16 2, 48 2, 62 30" stroke={C.forest} strokeWidth="2" fill="none" strokeLinecap="round" />
+          </svg>
+          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: C.forest, marginBottom: 8 }}>The Rubric</div>
+          <div style={{ fontSize: 24, fontWeight: 900, color: C.espresso, marginBottom: 20 }}>Why these three pillars?</div>
+          <p style={{ fontSize: 15, color: C.darkBrown, lineHeight: 1.8, marginBottom: 16, textAlign: "left" }}>
+            {"This framework comes from "}
+            <a href="https://www.youtube.com/watch?v=3aWHJdS59Qk" style={{ color: C.forest, fontWeight: 700, textDecoration: "underline", textDecorationStyle: "dotted", textUnderlineOffset: 3 }}>Chloe Shih</a>
+            {", a PM leader who\u2019s reviewed thousands of resumes at companies like Meta and TikTok. Her take is refreshingly simple: most resume advice is vague fluff. What actually matters is whether your bullets prove impact, whether your information is structured so the important stuff hits first, and whether an ATS can even parse your formatting."}
+          </p>
+          <p style={{ fontSize: 15, color: C.darkBrown, lineHeight: 1.8, marginBottom: 16, textAlign: "left" }}>
+            {"She boils it down to three things \u2014 "}
+            <strong style={{ color: C.forest }}>Impact Statements</strong>
+            {" (are you quantifying results or just listing tasks?), "}
+            <strong style={{ color: C.forest }}>Information Architecture</strong>
+            {" (is your best work buried at the bottom?), and "}
+            <strong style={{ color: C.forest }}>ATS Design</strong>
+            {" (will a robot even let a human see this?)."}
+          </p>
+          <p style={{ fontSize: 15, color: C.brown, lineHeight: 1.8, textAlign: "left", fontStyle: "italic" }}>
+            We weighted Impact at 40% and the other two at 30% each — because at the end of the day, showing what you achieved matters most.
+          </p>
+        </div>
       </div>
 
       {/* Footer */}
@@ -636,8 +705,8 @@ export default function App() {
 function SectionHead({ label, color: C }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-      <div style={{ width: 6, height: 6, background: C.terracotta, transform: "rotate(45deg)", flexShrink: 0 }} />
-      <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: C.brown }}>{label}</span>
+      <div style={{ width: 6, height: 6, background: C.forest, transform: "rotate(45deg)", flexShrink: 0 }} />
+      <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: C.forest }}>{label}</span>
       <div style={{ flex: 1, height: "1px", background: C.sand }} />
     </div>
   );
