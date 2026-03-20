@@ -22,6 +22,10 @@ Single-page React app (JavaScript, no TypeScript) that analyzes resumes using th
 
 **Backend (`netlify/functions/`):** A `analyze.js` function file exists but is currently empty — the API proxy is not yet implemented. `netlify.toml` is also empty.
 
+## Workflow
+
+- After every code change, provide a `git add && git commit && git push` command for the user to run.
+
 ## Lint Rules
 
 - `no-unused-vars` ignores variables starting with uppercase or underscore (`varsIgnorePattern: '^[A-Z_]'`)
