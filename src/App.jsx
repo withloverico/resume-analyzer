@@ -31,6 +31,7 @@ IMPORTANT SCORING RULES:
 IMPORTANT FOR WORK EXPERIENCE:
 - Extract EVERY job from the resume
 - For each job include the company name, job title, and a 1-2 sentence summary of what your bullet points convey
+- For each job, extract ALL bullet points verbatim as "original" and provide a stronger rewrite for each in "rewrite"
 
 Respond ONLY with valid JSON, no markdown, no preamble:
 {
@@ -41,7 +42,7 @@ Respond ONLY with valid JSON, no markdown, no preamble:
     "ats_design": { "score": 0, "summary": "", "suggestions": [""] }
   },
   "work_experience": [
-    { "company": "", "title": "", "summary": "" }
+    { "company": "", "title": "", "summary": "", "bullets": [{ "original": "", "rewrite": "" }] }
   ],
   "weakest_bullets": [
     { "original": "", "rewrite": "", "reason": "" }
@@ -84,6 +85,10 @@ export default function App() {
   const inputRef = useRef();
   const loadingIntervalRef = useRef();
   const phraseIntervalRef = useRef();
+  const jobCardRefs = useRef([]);
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [cardRect, setCardRect] = useState(null);
+  const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
     const link = document.createElement("link");
@@ -139,7 +144,7 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
-          max_tokens: 4096,
+          max_tokens: 8192,
           system: SYSTEM,
           messages: [{ role: "user", content: [
             { type: "document", source: { type: "base64", media_type: "application/pdf", data: b64 } },
@@ -166,6 +171,25 @@ export default function App() {
     setError(null);
     setLoading(false);
     setView("upload");
+  };
+
+  const openJobCard = (index) => {
+    const rect = jobCardRefs.current[index].getBoundingClientRect();
+    setCardRect(rect);
+    setSelectedJob(index);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setIsFlipped(true);
+      });
+    });
+  };
+
+  const closeJobCard = () => {
+    setIsFlipped(false);
+    setTimeout(() => {
+      setSelectedJob(null);
+      setCardRect(null);
+    }, 700);
   };
 
   const pillars = [
@@ -268,10 +292,18 @@ export default function App() {
               <SectionHead label="Work Experience Detected" color={C} />
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
                 {result.work_experience.map((job, i) => (
-                  <div key={i} style={{ padding: 20, background: C.sand, border: `1px solid ${C.tan}` }}>
+                  <div
+                    key={i}
+                    ref={el => jobCardRefs.current[i] = el}
+                    onClick={() => openJobCard(i)}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = C.terracotta; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = C.tan; e.currentTarget.style.transform = "translateY(0)"; }}
+                    style={{ padding: 20, background: C.sand, border: `1px solid ${C.tan}`, cursor: "pointer", transition: "border-color 0.2s, transform 0.2s" }}
+                  >
                     <div style={{ fontSize: 15, fontWeight: 900, color: C.espresso, marginBottom: 2 }}>{job.title}</div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: C.terracotta, letterSpacing: "0.04em", marginBottom: 10 }}>{job.company}</div>
-                    <p style={{ fontSize: 14, color: C.darkBrown, lineHeight: 1.65, margin: 0 }}>{job.summary}</p>
+                    <p style={{ fontSize: 14, color: C.darkBrown, lineHeight: 1.65, margin: "0 0 12px" }}>{job.summary}</p>
+                    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.brown }}>View bullet rewrites →</div>
                   </div>
                 ))}
               </div>
@@ -346,6 +378,103 @@ export default function App() {
             </div>
           </div>
         </div>
+
+        {/* Flip card modal */}
+        {selectedJob !== null && cardRect && (() => {
+          const job = result.work_experience[selectedJob];
+          const vw = window.innerWidth;
+          const vh = window.innerHeight;
+          const modalW = Math.min(700, vw - 48);
+          const srcCX = cardRect.left + cardRect.width / 2;
+          const srcCY = cardRect.top + cardRect.height / 2;
+          const dx = srcCX - vw / 2;
+          const dy = srcCY - vh / 2;
+          const scale = cardRect.width / modalW;
+
+          return (
+            <div
+              onClick={closeJobCard}
+              style={{
+                position: "fixed", inset: 0, zIndex: 1000,
+                background: isFlipped ? "rgba(44,31,14,0.6)" : "transparent",
+                transition: "background 0.5s ease",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                perspective: "1200px",
+              }}
+            >
+              <div
+                onClick={e => e.stopPropagation()}
+                style={{
+                  width: modalW,
+                  transformStyle: "preserve-3d",
+                  transition: "transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)",
+                  transform: isFlipped
+                    ? "translate(0px, 0px) scale(1) rotateY(180deg)"
+                    : `translate(${dx}px, ${dy}px) scale(${scale}) rotateY(0deg)`,
+                }}
+              >
+                {/* Front face */}
+                <div style={{
+                  position: "absolute", inset: 0,
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                  background: C.sand,
+                  border: `1px solid ${C.tan}`,
+                  padding: 32,
+                  display: "flex", flexDirection: "column", justifyContent: "center",
+                }}>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: C.espresso, marginBottom: 4 }}>{job.title}</div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: C.terracotta, letterSpacing: "0.04em", marginBottom: 16 }}>{job.company}</div>
+                  <p style={{ fontSize: 15, color: C.darkBrown, lineHeight: 1.7, margin: 0 }}>{job.summary}</p>
+                </div>
+
+                {/* Back face */}
+                <div style={{
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                  transform: "rotateY(180deg)",
+                  background: C.cream,
+                  border: `1px solid ${C.tan}`,
+                  padding: "32px 36px",
+                  maxHeight: "80vh",
+                  overflowY: "auto",
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24, paddingBottom: 20, borderBottom: `1px solid ${C.sand}` }}>
+                    <div>
+                      <div style={{ fontSize: 20, fontWeight: 900, color: C.espresso, marginBottom: 2 }}>{job.title}</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: C.terracotta, letterSpacing: "0.04em" }}>{job.company}</div>
+                    </div>
+                    <button
+                      onClick={closeJobCard}
+                      style={{
+                        background: "none", border: `1px solid ${C.tan}`,
+                        fontSize: 12, fontWeight: 700, color: C.brown,
+                        padding: "8px 14px", cursor: "pointer",
+                        letterSpacing: "0.1em", textTransform: "uppercase",
+                        fontFamily: ff,
+                      }}
+                    >Close ✕</button>
+                  </div>
+
+                  <SectionHead label="Bullet Rewrites" color={C} />
+
+                  {job.bullets && job.bullets.map((b, i) => (
+                    <div key={i} style={{ marginBottom: 20, paddingBottom: 20, borderBottom: `1px solid ${C.sand}` }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", color: C.brown, textTransform: "uppercase", marginBottom: 6 }}>Original</div>
+                      <p style={{ fontSize: 14, color: C.brown, lineHeight: 1.7, margin: "0 0 12px", fontStyle: "italic" }}>{b.original}</p>
+                      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", color: C.moss, textTransform: "uppercase", marginBottom: 6 }}>Suggested Rewrite</div>
+                      <p style={{ fontSize: 14, color: C.darkBrown, lineHeight: 1.7, margin: 0 }}>{b.rewrite}</p>
+                    </div>
+                  ))}
+
+                  {(!job.bullets || job.bullets.length === 0) && (
+                    <p style={{ fontSize: 14, color: C.brown, fontStyle: "italic" }}>No bullet points detected for this position.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Footer */}
         <div style={{ background: C.espresso, padding: "24px 48px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", zIndex: 1 }}>
