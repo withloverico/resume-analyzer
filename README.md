@@ -1,5 +1,7 @@
 # Resume Analyzer
 
+Try it out here: resumeanalyzer.withloverico.me
+
 An AI-powered resume analyzer that scores your resume using the **Three Pillars Framework** and rewrites every bullet point for you.
 
 Upload a PDF, get an honest score out of 100, and walk away with a better resume.
