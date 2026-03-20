@@ -18,15 +18,19 @@ const C = {
 
 const SYSTEM = `You are an elite Technical Recruiter and Career Coach specializing in Big Tech (Meta, Google, TikTok). Analyze the resume using the Three Pillars Framework.
 
+IMPORTANT TONE RULES:
+- ALWAYS address the resume owner directly as "you" / "your" — NEVER use third-person ("the candidate", "they", "he", "she", or the person's name)
+- Write as if you are speaking directly to the person whose resume this is
+
 IMPORTANT SCORING RULES:
 - All scores are out of 100 (not 10)
 - Be constructive and actionable in ALL feedback — never give vague praise like "good use of bullet points"
-- Every pillar summary MUST include specific suggestions starting with "I suggest..." or "Consider..."
-- If a score is below 90, explain exactly what needs to change to reach 90+
+- Every pillar summary MUST include specific suggestions starting with "I suggest you..." or "Consider..."
+- If a score is below 90, explain exactly what you need to change to reach 90+
 
 IMPORTANT FOR WORK EXPERIENCE:
 - Extract EVERY job from the resume
-- For each job include the company name, job title, and a 1-2 sentence summary of what their bullet points convey
+- For each job include the company name, job title, and a 1-2 sentence summary of what your bullet points convey
 
 Respond ONLY with valid JSON, no markdown, no preamble:
 {
@@ -239,13 +243,16 @@ export default function App() {
                 <span style={{ fontSize: 12, color: C.tan }}>100</span>
               </div>
             </div>
-            <div style={{ display: "flex", gap: 24 }}>
-              {pillars.map(p => (
-                <div key={p.key} style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 28, fontWeight: 900, color: C.sand }}>{result.pillars[p.key].score}</div>
-                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: C.tan, textTransform: "uppercase", maxWidth: 80, lineHeight: 1.3 }}>{p.label}</div>
-                </div>
-              ))}
+            <div style={{ borderLeft: `1px solid ${C.darkBrown}`, paddingLeft: 32 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: C.tan, marginBottom: 12 }}>Category Scores</div>
+              <div style={{ display: "flex", gap: 0 }}>
+                {pillars.map((p, i) => (
+                  <div key={p.key} style={{ textAlign: "center", padding: "0 20px", borderLeft: i > 0 ? `1px solid ${C.darkBrown}` : "none" }}>
+                    <div style={{ fontSize: 28, fontWeight: 900, color: C.sand }}>{result.pillars[p.key].score}</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", color: C.tan, textTransform: "uppercase", maxWidth: 80, lineHeight: 1.3 }}>{p.label}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
